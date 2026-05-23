@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "K+565xUqsvI=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\logan\\source\\repos\\GalaxyPets - Blazor\\GalaxyPets\\GalaxyPets.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\logan\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.3\\microsoft.aspnetcore.app.internal.assets.10.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}
