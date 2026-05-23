@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "K+565xUqsvI=",
+  "dgSpecHash": "8WHe9eIBMmM=",
   "success": true,
-  "projectFilePath": "C:\\Users\\logan\\source\\repos\\GalaxyPets - Blazor\\GalaxyPets\\GalaxyPets.csproj",
+  "projectFilePath": "C:\\Users\\logan\\source\\repos\\GalaxyPets - Blazor\\GalaxyPets\\src\\GalaxyPets.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\logan\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.3\\microsoft.aspnetcore.app.internal.assets.10.0.3.nupkg.sha512"
   ],
