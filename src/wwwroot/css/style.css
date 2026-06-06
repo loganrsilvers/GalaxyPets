@@ -1,0 +1,320 @@
+:root {
+    /* Colors */
+    --dark-purple: #6917d0;
+    --light-purple: #cc17ff;
+    --pink: #ff1791;
+    --green: #17ffc4;
+    --blue: #17ffee;
+
+    /* Fonts */
+    --main-font: 'pixel';
+    --header-font: 'planet';
+    --header-font-size: 35px;
+    --base-font-size: 1em;
+    --base-line-height: 1.4em;
+}
+
+@font-face {
+    font-family: 'pixel';
+    src: url(pixel.ttf) format('truetype');
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'planet';
+    src: url(planet.TTF) format('truetype');
+    font-display: swap;
+}
+ html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+   
+ 
+body {
+    font-family: var(--main-font), sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    background-image: url(../img/aquagalaxy_small.gif);
+    color: #ffffff;
+    cursor: url(../img/cursor/oth756.png), auto;
+}
+
+}
+
+
+
+html {
+    /* Standard text-settings below */
+    font-size: var(--base-font-size);
+    line-height: var(--base-line-height);
+    font-family: var(--main-font), sans-serif;
+}
+
+/* Mobile First CSS: we'll design for phone sizes first, then add media queries for larger screens later */
+
+.blue {
+    color: var(--blue);
+}
+
+.light-purple {
+    color: var(--light-purple);
+}
+
+.green {
+    color: var(--green);
+}
+
+.dark-purple {
+    color: var(--dark-purple);
+}
+
+.pink {
+    color: var(--pink);
+}
+
+body {
+    font-family: var(--main-font), sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    background-image: url(/Assets/img/aquagalaxy_small.gif);
+    color: #ffffff;
+
+}
+
+header {
+    background-color: black;
+    padding: 1rem;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--main-font), sans-serif;
+}
+
+.logo {
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    font-family: var(--header-font), sans-serif;
+    font-weight: bold;
+    color: var(--blue);
+}
+
+nav ul {
+    list-style-type: none;
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+nav ul li a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+nav a:hover {
+    color: var(--pink);
+    text-decoration:wavy;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: black;
+    min-width: 160px;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: #ffffff;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+main {
+    padding-top: 0.5rem;
+    padding-bottom: 2rem;
+}
+
+/* Clubs Page */
+.planet-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    min-height: 350px;
+}
+
+.planet-card {
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 230px;
+}
+
+.planet-card img {
+    width: 100px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.planet-card img:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
+    cursor: pointer;
+}
+
+.planet-card p {
+    margin: 5px 0;
+}
+
+.planet-card h2 {
+    font-family: var(--main-font), sans-serif;
+    color: var(--blue);
+    text-align: center;
+    position: relative;
+    display: inline-block;
+}
+
+.info {
+    display: none; /* Hide by default */
+    position: relative;
+    background: rgba(0, 0, 0, 0.8);
+    color: var(--blue);
+    font-family: var(--main-font), sans-serif;
+    padding: 10px;
+    border-radius: 15px;
+    border: 1px solid var(--light-purple);
+    transition: opacity 0.3s ease-in-out;
+}
+
+.planet-img:hover + .info {
+    display: block;
+}
+
+figure {
+    text-align: center;
+}
+
+figure img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+figcaption {
+    margin-top: 0.5rem;
+    font-style: italic;
+}
+
+footer {
+    background-color: black;
+    color: #ffffff;
+    text-align: center;
+    padding: 1rem;
+    position: static;
+    bottom: 0;
+    width: 100%;
+}
+
+footer ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+footer ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+footer ul li a {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: var(--pink);
+    text-decoration: none;
+}
+
+/* ========================================
+MEDIA QUERIES!
+You can adjust the min-width numbers below, and add as many new media queries as you need.
+======================================== */
+
+
+/* Minimum width for laptops. */
+@media all and (min-width: 769px) {
+
+
+}
+
+/* closes 769px+ */
+
+
+/* Minimum width for desktop screens. */
+@media all and (min-width: 1024px) {
+
+
+}
+
+/* closes 1024px+ */
+
+/* Start https://www.cursors-4u.com */ * {cursor: url(https://cur.cursors-4u.net/others/oth-8/oth756.cur), auto !important;} /* End https://www.cursors-4u.com */
+.mission-statement {
+    border: 2px solid var(--pink);
+    color: var(--pink);
+    animation: flashPinkText 2s infinite ease-in-out;
+    background-color: rgba(255, 23, 145, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+@keyframes flashPinkText {
+    0%, 100% {
+        color: #ff1791;
+        text-shadow: 0 0 10px #ff1791;
+    }
+    50% {
+        color: #ff79c6;
+        text-shadow: 0 0 20px #ff79c6;
+    }
+}
+
+.right-tab {
+    color: rgb(188, 24, 213) !important;
+}
+
+
+.right-tab {
+    color: purple !important;
+    border-top: 2px solid purple;
+    border-bottom: 2px solid purple;
+    padding: 5px 0;
+    box-shadow: 0 0 5px limegreen; /* subtle glow */
+    transition: box-shadow 0.3s ease;
+}
+
+.right-tab:hover {
+    box-shadow: 0 0 10px 2px limegreen; /* stronger glow on hover */
+}
+
+
+
