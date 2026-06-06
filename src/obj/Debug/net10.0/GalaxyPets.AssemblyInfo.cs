@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("GalaxyPets")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f3f7ea906cf38327746edbacf76783175e3b0678")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+56b15e724a8d12fc118ff6dc6e3dd30db502d9bb")]
 [assembly: System.Reflection.AssemblyProductAttribute("GalaxyPets")]
 [assembly: System.Reflection.AssemblyTitleAttribute("GalaxyPets")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
