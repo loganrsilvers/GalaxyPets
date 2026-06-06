@@ -1,0 +1,159 @@
+/* Basic CSS resets -- leveling slight inconsistencies in browsers */
+html, body {
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+}
+
+html {
+    /* Standard text-settings below */
+    font-size: 1em;
+    line-height: 1.4em;
+}
+
+
+/* Mobile First CSS: we'll design for phone sizes first, then add media queries for larger screens later */
+
+body {
+    background-color: black !important;
+    color: deeppink;
+
+}
+
+.main {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    padding: 1em;
+}
+
+#board {
+    width: 430px;
+    height: 430px;
+    border: 30px dashed purple;
+    border-image: url("/Assets/img/boarders/Image.png") 300;
+
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 5px;
+}
+
+.tile {
+    width: 90px;
+    height: 90px;
+    border: deeppink 3px solid;
+    background-color: black;
+    color: deeppink;
+
+    font-size: 40px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game-controls, .game-info {
+    padding: 10px 15px;
+    background-color: gray;
+    color: white;
+    border: var(--light-purple) 1px solid;
+    border-radius: 10px;
+    width: fit-content;
+    height: fit-content;
+    margin: auto 1fr auto 0;
+}
+
+.game-info h1, h2 {
+    width: max-content;
+    display: inline-block;
+}
+
+.x2 {
+    background-color: black;
+    background-image: url(/Assets/img/planets/blueplanet.png);
+    background-size: cover;
+}
+
+.x4 {
+    background-color: rgb(0, 0, 33);
+    background-image: url(/Assets/img/planets/greenandpinkplanet.png);
+}
+
+.x8 {
+    background-color: rgb(0, 0, 46);
+    background-image: url(/Assets/img/planets/lavenderplanet.png);
+}
+
+.x16 {
+    background-color: rgb(0, 0, 61);
+    background-image: url(/Assets/img/planets/pinkplanet.png);
+}
+
+.x32 {
+    background-color: rgb(0, 0, 84);
+    background-image: url(/Assets/img/planets/purpleplanet.png);
+}
+
+.x64 {
+    background-color: rgb(0, 0, 91);
+}
+
+.x128 {
+    background-color: rgb(0, 0, 111);
+}
+
+.x256 {
+    background-color: rgb(0, 0, 130);
+}
+
+.x512 {
+    background-color: rgb(0, 0, 150);
+
+}
+
+.x1024 {
+    background-color: rgb(0, 0, 180);
+
+}
+
+.x2048 {
+    background-color: rgb(0, 0, 200);
+
+}
+
+.x4096 {
+    background-color: rgb(0, 0, 228);
+
+}
+
+.x8192 {
+    background-color: rgb(0, 0, 255);
+
+}
+
+
+/* ========================================
+MEDIA QUERIES!
+You can adjust the min-width numbers below, and add as many new media queries as you need.
+======================================== */
+
+
+/* Minimum width for laptops. */
+@media all and (min-width: 769px) {
+
+
+}
+
+/* closes 769px+ */
+
+
+/* Minimum width for desktop screens. */
+@media all and (min-width: 1024px) {
+
+
+}
+
+/* closes 1024px+ */
+
+
+
