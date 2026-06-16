@@ -1,61 +1,116 @@
-<?php
-session_start();
+@page "/clubs"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
 
-if (!isset($_SESSION['username'])) {
-    //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-    header("location: /../login.php");
+<div class="clubs-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1>Welcome, @AuthService.CurrentUsername!</h1>
+        }
+    </header>
+
+    <marquee behavior="scroll" direction="left" scrollamount="5" style="color: #17ffee;">
+        ���*"��"*��.???.��*"��"*��.???��*"��"*��.???.��*"��"*��.???��*"��"*��.???
+    </marquee>
+
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to join clubs.</p>
+    }
+    else
+    {
+        <main>
+            <section class="planet-grid" aria-label="Club Planets">
+                <div class="container">
+                    <div class="row">
+                        @foreach (var club in ClubList)
+                        {
+                            <div class="col-md-6 col-lg-3 mb-4">
+                                <NavLink href="@club.Route" class="card h-100 text-decoration-none">
+                                    <img src="@club.ImageUrl" class="card-img-top" alt="@club.Name">
+                                    <div class="card-body text-center">
+                                        <h5 class="card-title">@club.Name</h5>
+                                        <p class="card-text small">@club.Description</p>
+                                    </div>
+                                </NavLink>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </section>
+        </main>
+    }
+
+    <marquee behavior="scroll" direction="right" scrollamount="5" style="color: #17ffee;">
+        ��*"��"*��.???.��*"��"*��.???��*"��"*��.???.��*"��"*��.???��*"��"*��.???
+    </marquee>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center border-top footer">
+        <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 GalaxyPets</p>
+        <ul class="d-flex align-items-center list-unstyled m-0 ml-auto">
+            <li><NavLink href="/about" class="text-body-secondary">About Us</NavLink></li>
+            <li class="ms-3"><NavLink href="/" class="text-body-secondary">Official Site</NavLink></li>
+        </ul>
+    </footer>
+</div>
+
+@code {
+    private List<ClubItem> ClubList = new();
+
+    protected override void OnInitialized()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/account/login");
+            return;
+        }
+
+        // Load clubs from configuration or service
+        ClubList = new List<ClubItem>
+        {
+            new ClubItem
+            {
+                Id = 1,
+                Name = "Atom''s Halo",
+                Description = "Explore the mysteries of the galactic halo",
+                ImageUrl = "/img/planets/lavenderplanet.png",
+                Route = "/clubs/atomshalo"
+            },
+            new ClubItem
+            {
+                Id = 2,
+                Name = "Galaxy Glitter",
+                Description = "Immerse yourself in sparkling cosmic dust",
+                ImageUrl = "/img/planets/greenandpinkplanet.png",
+                Route = "/clubs/galaxyglitter"
+            },
+            new ClubItem
+            {
+                Id = 3,
+                Name = "Zero Gravity",
+                Description = "Experience weightlessness and cosmic wonders",
+                ImageUrl = "/img/planets/purpleplanet.png",
+                Route = "/clubs/zerogravity"
+            },
+            new ClubItem
+            {
+                Id = 4,
+                Name = "Orbitors",
+                Description = "Discover the thrill of orbiting celestial bodies",
+                ImageUrl = "/img/planets/blueplanet.png",
+                Route = "/clubs/orbitors"
+            }
+        };
+    }
+
+    private sealed class ClubItem
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string ImageUrl { get; set; } = "";
+        public string Route { get; set; } = "";
+    }
 }
-
-?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalaxyPets - Your Space Adventure Begins!</title>
-    <link rel="stylesheet" href="../Assets/css/style.css">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-
-<body>
-<header class="border-bottom sticky-top">
-    <div id="navbar-container"></div>
-    <h1>Welcome, <?php echo htmlspecialchars('username'); ?>!</h1>
-    <p>Your current points: <strong><?php echo htmlspecialchars('points'); ?></strong></p>
-</header>
-
-<marquee behavior=scroll direction="left" scrollamount="5" style="color: #17ffee;">
-    •°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ
-</marquee>
-
-<main>
-    <section class="planet-grid" aria-label="Club Planets">
-        <!-- The js fills this in with the links to the planets,  the json is editable there -->
-    </section>
-</main>
-
-<marquee behavior=scroll direction="right" scrollamount="5" style="color: #17ffee;">
-    •°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ
-</marquee>
-
-<footer class="d-flex flex-wrap justify-content-between align-items-center border-top footer fixed-bottom">
-    <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 GalaxyPets</p>
-    <ul class="d-flex align-items-center list-unstyled m-0 ml-auto">
-        <li>
-            <a class="text-body-secondary"
-               href="../about.php">About Us</a></li>
-        <li>
-            <a class="text-body-secondary"
-               href="../index.php">Official Site</a></li>
-    </ul>
-</footer>
-</body>
-
-<script src="../Assets/js/clubpage.js"></script>
-<script src="../Assets/js/navbar.js"></script>
-</html>

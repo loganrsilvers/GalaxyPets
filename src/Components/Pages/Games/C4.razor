@@ -1,0 +1,43 @@
+@page "/games/c4"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+
+<div class="c4-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1>Welcome, @AuthService.CurrentUsername!</h1>
+        }
+    </header>
+
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to play.</p>
+    }
+    else
+    {
+        <main>
+            <div id="game-area">
+                <div class="game-info">
+                    <h1>Connect 4</h1>
+                    <p>Get four in a row to win!</p>
+                </div>
+                <div id="game-container"></div>
+            </div>
+        </main>
+    }
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AuthService.IsAuthenticated)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "fetch(''/js/clubpage.js'').then(r => r.text()).then(t => eval(t))");
+        }
+    }
+
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
+}

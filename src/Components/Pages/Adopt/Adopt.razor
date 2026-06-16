@@ -1,169 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MyGalaxyPet Profile - GalaxyPets</title>
-    <link rel="stylesheet" href="../Assets/css/profilestyle.css">
-</head>
+@page "/adopt"
+@using GalaxyPets.Models
+@inject AuthService AuthService
+@inject PetService PetService
+@inject NavigationManager Navigation
 
-<?php 
-session_start();
-?>
+<div class="adopt-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1>Welcome, @AuthService.CurrentUsername!</h1>
+        }
+    </header>
 
-
-<body>
-
-<div>
-<header>
-    <?php
-
-    
-    if (!isset($_SESSION['username'])){
-        //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-        header("location: /../login.php");
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to adopt a pet.</p>
     }
-    
-    ?>
-    <nav>
-        <div class="logo"><a href="../index.php" style="text-decoration: none;">GalaxyPets</a></div>
-        <ul>
-            <li><a href="../index.php">Back to Home</a></li>
-            <li class="dropdown">
-                Community
-                <div class="dropdown-content">
-                    <a href="clubs.php">Clubs</a>
-                    <a href="petprofile.php">Users</a>
-                </div>
-            </li>
-            <li><a href="games.php">Games</a></li>
-            <li><a href="shop.php">Shop</a></li>
-            <li><a href="/../logout.php">Log Out</a></li>
-        </ul>
-    </nav>
-     <h1>Welcome, <?php echo htmlspecialchars('username'); ?>!</h1>
-    <p>Your current points: <strong><?php echo htmlspecialchars('points'); ?></strong></p>
-</header>
-<main>
-	<br>
-	<div>
-		<h2> Adopt a Pet </h2>
-        <div id="petPreview">
-            <div id="PreviewHeader">
-            Pet Preview:
-            </div>
-            <script type="text/javascript">
+    else
+    {
+        <main>
+            <section class="adopt-container">
+                <h2>Adopt a Pet</h2>
+                
+                <div class="adoption-form">
+                    <div class="form-group">
+                        <label for="petName">Pet Name:</label>
+                        <input type="text" class="form-control" id="petName" @bind="PetName" placeholder="Name your pet">
+                    </div>
 
-                /* setInterval (function showPreview() {
-
-                    var species = document.getElementById('species').value;
-                    
-                    var color = document.getElementById('color').value;
-                    
-                    document.getElementById('pet').innerHTML = '<img src="../Assets/img/' + species + '/regular/' + color + '.png" width="300px" height="300px">';
-                }, 0.01 * 1000 );*/
-                setInterval(function showPreview() {
-                var species = document.getElementById('species').value;
-                var color = document.getElementById('color').value;
-
-                // Set pet image
-            document.getElementById('pet').innerHTML = '<img src="../Assets/img/' + species + '/regular/' + color + '.png" width="300px" height="300px">';
-
-                // Set description
-                var descriptionText = "";
-                if (species === "glorbus") {
-                    descriptionText = "Glorbus: A cheerful space blob that feeds on cosmic dust.";
-                } else if (species === "jelly") {
-                    descriptionText = "Jelly: A translucent jellyfish-like creature that floats through galaxies.";
-                }
-
-    document.getElementById('description').innerText = descriptionText;
-
-}, 100); // Still updates every 0.1 second
-//says i need to make a html? w this info on it >:///
-            </script>
-            <div id="pet"></div>
-            <div id="description" style="margin-top: 1em; font-style: italic;"></div>
-
-
-            <form action="adoption.php" method="GET">
-                <fieldset>
-                    <legend>Create Your Pet</legend>
-                    <br>
-                    
-                    Name:<br>
-                        <input type='text' value="name" id="name" name="name">
-                        <br>
-                        <br>
-                    Species:<br>
-                        <select name="species" id="species">
+                    <div class="form-group">
+                        <label for="species">Species:</label>
+                        <select class="form-control" id="species" @onchange="HandleSpeciesChange">
+                            <option value="jelly">Stardust Jelly</option>
                             <option value="glorbus">Glorbus</option>
-                            <option value="jelly">Jelly</option>
                         </select>
-                        <br>
+                    </div>
 
-                        
-
-                    Color:<br>
-                        <select name="color" id="color">
-                            
-                            <option value="green">Green</option>
-                            <option value="blue">Blue</option>
+                    <div class="form-group">
+                        <label for="color">Color:</label>
+                        <select class="form-control" id="color" @onchange="HandleColorChange">
                             <option value="lightpurple">Light Purple</option>
+                            <option value="blue">Blue</option>
+                            <option value="green">Green</option>
                             <option value="darkpurple">Dark Purple</option>
                             <option value="pink">Pink</option>
-                            
                         </select>
-                        <br>
-                        <br>
-                    Planet:<br>
-                        <input type='text' value="planet" id="planet" name="planet">
-                        <br>
-                        <br>
-                </fieldset>
-                <br>
-                <?php 
-                if (isset($_SESSION['username'])){
-                    echo '<input type="submit" value="Adopt!">';
-                    echo ' ';
-                    echo '<input type="reset" value="Reset Form">';
-                } else {
-                    echo '<a href="../login.php">';
-                        echo '<div id="login-message">';
-                            echo "Log in to adopt a pet";
-                        echo '</div>';
-                    echo '</a>';
-                }
-                ?>
-            </form>
-        </div>
-			<br>
-            <!--Or, if zcdscdscszccdyou want to order for someone else <br> but don't know how they want their dragon, <br>why not get a <a href="orderGiftCard.php">gift card</a>?-->
-	</div>
-</main>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="planet">Home Planet:</label>
+                        <select class="form-control" id="planet" @bind="SelectedPlanet">
+                            <option value="Atom's Halo">Atom's Halo</option>
+                            <option value="Galaxy Glitter">Galaxy Glitter</option>
+                            <option value="Zero Gravity">Zero Gravity</option>
+                            <option value="Orbitors">Orbitors</option>
+                        </select>
+                    </div>
+
+                    <div class="pet-preview">
+                        <h3>Pet Preview:</h3>
+                        <img src="@PreviewImageUrl" alt="Your pet" style="width: 200px; height: 200px;">
+                        <p>@PreviewDescription</p>
+                    </div>
+
+                    <button class="btn btn-primary mt-3" @onclick="AdoptPet">Adopt This Pet!</button>
+                </div>
+            </section>
+        </main>
+    }
 </div>
 
+@code {
+    private string PetName = "";
+    private string SelectedSpecies = "jelly";
+    private string SelectedColor = "lightpurple";
+    private string SelectedPlanet = "Atom's Halo";
+    private string PreviewImageUrl = "/img/jelly/regular/lightpurple.png";
+    private string PreviewDescription = "Jelly: A translucent jellyfish-like creature that floats through galaxies.";
 
+    protected override void OnInitialized()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/account/login");
+        }
+        UpdatePreview();
+    }
 
-</body>
-</html>
+    private void HandleSpeciesChange(ChangeEventArgs e)
+    {
+        SelectedSpecies = e.Value?.ToString() ?? "jelly";
+        UpdatePreview();
+    }
 
-<?php
-    
-	session_start();
-    
-    require_once '../config.php';
+    private void HandleColorChange(ChangeEventArgs e)
+    {
+        SelectedColor = e.Value?.ToString() ?? "lightpurple";
+        UpdatePreview();
+    }
 
-    $username = $_SESSION['username'];
-    $petname = $_GET['name'];
-    $species = $_GET['species'];
-    $color = $_GET['color'];
-    $planet = $_GET['planet'];
+    private void UpdatePreview()
+    {
+        PreviewImageUrl = $"/img/{SelectedSpecies}/regular/{SelectedColor}.png";
+        PreviewDescription = SelectedSpecies == "glorbus"
+            ? "Glorbus: A cheerful space blob that feeds on cosmic dust."
+            : "Jelly: A translucent jellyfish-like creature that floats through galaxies.";
+    }
 
-    $sql = "INSERT INTO pets (username, petname, species, color, planet) VALUES ('$username', '$petname', '$species', '$color', '$planet')";
+    private async Task AdoptPet()
+    {
+        if (string.IsNullOrWhiteSpace(PetName))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Please name your pet!");
+            return;
+        }
 
-    mysqli_query($link, $sql);
+        var newPet = new Pet
+        {
+            Username = AuthService.CurrentUsername ?? "",
+            PetName = PetName,
+            Species = SelectedSpecies,
+            Color = SelectedColor,
+            Expression = "regular",
+            Planet = SelectedPlanet,
+            Birthday = DateTime.Now
+        };
 
-    header("location: petprofile.php");
-    
-?>
+        await PetService.AdoptPetAsync(newPet);
+        Navigation.NavigateTo("/petprofile");
+    }
+
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
+}

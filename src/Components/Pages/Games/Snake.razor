@@ -1,46 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Snake</title>
+@page "/games/snake"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-    <link rel="stylesheet" href="../../Assets/css/snake.css">
-    <link rel="stylesheet" href="../../Assets/css/style.css">
+<div class="snake-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1>Welcome, @AuthService.CurrentUsername!</h1>
+        }
+    </header>
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to play.</p>
+    }
+    else
+    {
+        <main>
+            <div id="game-area">
+                <div class="game-info">
+                    <h1>CYBER SNAKE!</h1>
+                    <p>Use the ''Arrow Keys'' to move around and eat the planets</p>
+                </div>
+                <canvas width="400" height="400" id="game"></canvas>
+            </div>
+        </main>
+    }
+</div>
 
-<body>
-<header>
-    <?php
-    session_start();
-
-    if (!isset($_SESSION['username'])){
-        //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-        header("location: /../login.php");
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AuthService.IsAuthenticated)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "fetch(''/js/snake.js'').then(r => r.text()).then(t => eval(t))");
+        }
     }
 
-    
-    ?>
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "if(typeof gameLoop !== ''undefined'') clearInterval(gameLoop);");
+        }
+        catch { }
+    }
 
-    <div id="navbar-container"></div>
-     <h1>Welcome, <?php echo htmlspecialchars('username'); ?>!</h1>
-    <p>Your current points: <strong><?php echo htmlspecialchars('points'); ?></strong></p>
-</header>
-
-<main>
-    <div id="game-area">
-        <div class="game-info">
-            <h1>CYBER SNAKE!</h1>
-            <p>Use the 'Arrow Keys' to move around and eat the planets</p>
-        </div>
-        <canvas width="400" height="400" id="game"></canvas>
-    </div>
-</main>
-
-<script src="../../Assets/js/snake.js"></script>
-<script src="../../Assets/js/navbar.js"></script>
-</body>
-</html>
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
+}

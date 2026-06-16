@@ -1,414 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Club Shop</title>
-    <link rel="stylesheet" href="../Assets/css/style.css">
-    <style>
-        :root {
-            --dark-purple: #6917d0;
-            --light-purple: #cc17ff;
-            --pink: #ff1791;
-            --green: #17ffc4;
-            --blue: #17ffee;
+@page "/shop"
+@using GalaxyPets.Models
+@inject AuthService AuthService
+@inject ShopService ShopService
+@inject NavigationManager Navigation
+
+<div class="shop-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1 class="text-center">GalaxyPets Shop</h1>
+            <p class="text-center">Your Points: <strong>@UserPoints</strong></p>
         }
+    </header>
 
-        body {
-            font-family: 'pixel', sans-serif;
-            background-color: black;
-            color: white;
-            margin: 0;
-            padding: 0;
-        }
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to shop.</p>
+    }
+    else
+    {
+        <main>
+            <section class="container shop-section">
+                <div class="filters mb-4">
+                    <div class="filter-group">
+                        <label for="filterType">Filter by Type:</label>
+                        <select @onchange="HandleFilterChange" class="form-control" style="max-width: 200px;">
+                            <option value="">All Items</option>
+                            <option value="hat">Hats</option>
+                            <option value="accessory">Accessories</option>
+                            <option value="pet-item">Pet Items</option>
+                        </select>
+                    </div>
+                </div>
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+                <div class="view-options mb-4">
+                    <button class="btn btn-sm btn-primary" @onclick="() => SetGridColumns(3)">3 Column</button>
+                    <button class="btn btn-sm btn-primary" @onclick="() => SetGridColumns(5)">5 Column</button>
+                </div>
 
-        h1 {
-            color: var(--blue);
-            text-align: center;
-        }
-
-        .filters {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .filter-group label {
-            margin-bottom: 5px;
-        }
-
-        select {
-            padding: 5px;
-            background-color: var(--dark-purple);
-            color: white;
-            border: none;
-        }
-
-        .view-options {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .view-options button {
-            margin-left: 10px;
-            padding: 5px 10px;
-            background-color: var(--pink);
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        .grid {
-            display: grid;
-            gap: 20px;
-        }
-
-        .grid-3 {
-            grid-template-columns: repeat(3, 1fr);
-        }
-
-        .grid-5 {
-            grid-template-columns: repeat(5, 1fr);
-        }
-
-        .item {
-            background-color: var(--dark-purple);
-            padding: 10px;
-            text-align: center;
-        }
-
-        .item img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .item h3 {
-            margin: 10px 0;
-            color: var(--green);
-        }
-
-        .item p {
-            margin: 5px 0;
-            color: var(--blue);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border: 1px solid var(--light-purple);
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--dark-purple);
-        }
-    </style>
-</head>
-<body>
-<?php
-session_start();
-if (!isset($_SESSION['username'])) {
-    //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-    header("location: /../login.php");
-}
-?>
-
-<header>
-    <div id="navbar-container"></div>
-</header>
-
-<marquee behavior=scroll direction="left" scrollamount="5" style="color: #17ffee;">
-    •°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ
-</marquee>
-<div class="container">
-    <h1>Welcome to the Shop!</h1>
-    <h1>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?>!</h1>
-    <p>Your current points: <strong><?php echo  htmlspecialchars($_SESSION['points'] ?? '0'); ?></strong></p>
-
-    <div class="filters">
-        <div class="filter-group">
-            <label for="product-type">Product Type:</label>
-            <select id="product-type">
-                <option value="">All</option>
-                <option value="hat">Hat</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="color">Color:</label>
-            <select id="color">
-                <option value="">All</option>
-                <option value="lilac">Lilac</option>
-                <option value="purple">Purple</option>
-                <option value="pink">Pink</option>
-                <option value="blue">Blue</option>
-                <option value="green">Green</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="fun-factor">Fun Factor:</label>
-            <select id="fun-factor">
-                <option value="">All</option>
-                <option value="super-fun">Super Fun</option>
-                <option value="kind-of-fun">Kind of Fun</option>
-                <option value="boring">Boring</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="view-options">
-        <button onclick="changeView('table')">Table View</button>
-        <button onclick="changeView('grid-3')">Grid (3 columns)</button>
-        <button onclick="changeView('grid-5')">Grid (5 columns)</button>
-    </div>
-
-    <div id="items-container"></div>
+                @if (FilteredItems.Count > 0)
+                {
+                    <div class="grid @($"grid-{GridColumns}")">
+                        @foreach (var item in FilteredItems)
+                        {
+                            <div class="item card">
+                                <img src="@item.ImageUrl" class="card-img-top" alt="@item.Name">
+                                <div class="card-body">
+                                    <h5 class="card-title">@item.Name</h5>
+                                    <p class="card-text">@item.ItemType</p>
+                                    <p class="card-text"><strong>@item.Price points</strong></p>
+                                    <button class="btn btn-sm btn-success" @onclick="() => PurchaseItem(item)">Buy</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-center">No items available.</p>
+                }
+            </section>
+        </main>
+    }
 </div>
 
-<script>
-    let items;
-    fetch("../Assets/php/shop_load_handler.php")
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error("Network error");
-            }
-            return response.text(); // first, get raw text
-        })
-        .then((text) => {
-            const data = JSON.parse(text); // now try to parse
-            console.log("Parsed JSON:", data);
-            items = data;
-            // Initialize with grid-3 view
-            changeView('grid-3');
-        })
-        .catch((error) => {
-            console.error("Error parsing JSON:", error);
-        });
+@code {
+    private List<Item> Items = new();
+    private List<Item> FilteredItems = new();
+    private int GridColumns = 3;
+    private int UserPoints = 0;
+    private string SelectedFilter = "";
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/account/login");
+            return;
+        }
+
+        await LoadShopData();
+    }
+
+    private async Task LoadShopData()
+    {
+        Items = await ShopService.GetShopItemsAsync();
+        UserPoints = await ShopService.GetUserPointsAsync(AuthService.CurrentUsername ?? "");
+        ApplyFilter();
+    }
+
+    private void HandleFilterChange(ChangeEventArgs e)
+    {
+        SelectedFilter = e.Value?.ToString() ?? "";
+        ApplyFilter();
+    }
+
+    private void ApplyFilter()
+    {
+        if (string.IsNullOrEmpty(SelectedFilter))
+        {
+            FilteredItems = Items;
+        }
+        else
+        {
+            FilteredItems = Items.Where(i => i.ItemType == SelectedFilter).ToList();
         }
     }
 
-    function changeView(viewType) {
-        const container = document.getElementById('items-container');
-        container.innerHTML = '';
+    private void SetGridColumns(int columns)
+    {
+        GridColumns = columns;
+    }
 
-        let itemsToDisplay = [...items]; // Create a copy to shuffle
-        shuffleArray(itemsToDisplay); // Shuffle the copied array
-
-        if (viewType === 'table') {
-            const table = document.createElement('table');
-            table.innerHTML = `
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Color</th>
-                <th>Fun Factor</th>
-            </tr>
-        `;
-            itemsToDisplay.forEach(item => {
-                table.innerHTML += `
-                <tr>
-                    <td><img src="../Assets/img/hats/${item.image}" alt="${item.name}" style="width: 50px;"></td>
-                    <td>${item.name}</td>
-                    <td>$${item.price.toFixed(2)}</td>
-                    <td>${item.color}</td>
-                    <td>${item.fun_factor}</td>
-                </tr>
-            `;
-            });
-            container.appendChild(table);
-        } else {
-            const grid = document.createElement('div');
-            grid.className = `grid ${viewType}`;
-
-            itemsToDisplay.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'item';
-
-                itemDiv.innerHTML = `
-                <img src="../Assets/img/hats/${item.image}" alt="${item.name}">
-                <h3>${item.name}</h3>
-                <p>$${item.price.toFixed(2)}</p>
-                <p>Color: ${item.color}</p>
-                <td>${item.fun_factor}</td>
-            `;
-
-                // ✅ Add click event listener here
-                itemDiv.addEventListener('click', () => buyItem(item));
-
-                grid.appendChild(itemDiv);
-            });
-
-            container.appendChild(grid);
+    private async Task PurchaseItem(Item item)
+    {
+        if (UserPoints >= item.Price)
+        {
+            await ShopService.PurchaseItemAsync(AuthService.CurrentUsername ?? "", item.Id);
+            await LoadShopData();
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Not enough points to purchase this item.");
         }
     }
 
-
-    function filterItems() {
-        const typeFilter = document.getElementById('product-type').value;
-        const colorFilter = document.getElementById('color').value;
-        const funFactorFilter = document.getElementById('fun-factor').value;
-
-        const filteredItems = items.filter(item =>
-            (typeFilter === '' || item.type === typeFilter) &&
-            (colorFilter === '' || item.color === colorFilter) &&
-            (funFactorFilter === '' || item.fun_factor === funFactorFilter)
-        );
-
-        displayFilteredItems(filteredItems);
-    }
-
-    function displayFilteredItems(filteredItems) {
-        const container = document.getElementById('items-container');
-        container.innerHTML = '';
-
-        let itemsToDisplay = [...filteredItems];
-        shuffleArray(itemsToDisplay);
-
-        const grid = document.createElement('div');
-        grid.className = 'grid grid-3';
-
-        itemsToDisplay.forEach(item => {
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item';
-
-            itemDiv.innerHTML = `
-            <img src="../Assets/img/hats/${item.image}" alt="${item.name}">
-            <h3>${item.name}</h3>
-            <p>$${item.price.toFixed(2)}</p>
-            <p>Color: ${item.color}</p>
-            <td>${item.fun_factor}</td>
-        `;
-
-            // ✅ Add event listener instead of inline onclick
-            itemDiv.addEventListener('click', () => buyItem(item));
-
-            grid.appendChild(itemDiv);
-        });
-
-        container.appendChild(grid);
-    }
-
-    function buyItem(item) {
-        // Create the AJAX request
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "./../Assets/php/buy_item.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-
-        // Prepare the data to send (you may need to adjust this according to your server-side needs)
-        const data = `item=${encodeURIComponent(JSON.stringify(item))}`;
-
-        // Send the request
-        xhr.send(data);
-
-        // Handle the response
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                const response = xhr.responseText;
-                alert(response);  // Display the response from the PHP script (success or failure)
-                location.reload();  // Reload the page after purchase
-            } else {
-                alert("An error occurred during the purchase process.");
-            }
-        };
-    }
-
-    // Add event listeners to filters
-    document.getElementById('product-type').addEventListener('change', filterItems);
-    document.getElementById('color').addEventListener('change', filterItems);
-    document.getElementById('fun-factor').addEventListener('change', filterItems);
-</script>
-<script src="../Assets/js/navbar.js"></script>
-</body>
-</html>
-
-<?php
-session_start();
-
-// Include config and function files
-require '../../config.php';
-require '../../functions.php';
-
-if (!isset($_SESSION['username'])) {
-    die("User not logged in");
-}
-
-$allItems = json_decode(file_get_contents("../json/items.json"), true);
-$accessories = getAccessories($link, $_SESSION['username']);
-$accessoryIDs = [];
-
-if ($accessories && $accessories->num_rows > 0) {
-    while ($row = $accessories->fetch_assoc()) {
-        $accessoryIDs[] = $row['accessory']; // e.g., "hat-1", "hat-2"
-    }
-}
-
-// Filter items to only those that do NOT match accessories
-$nonAccessoryItems = array_filter($allItems, function ($item) use ($accessoryIDs) {
-    return !in_array($item['id'], $accessoryIDs);
-});
-
-// We return the Accessories as Json
-header('Content-Type: application/json');
-echo json_encode(array_values($nonAccessoryItems));
-
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-session_start();
-
-require '../../config.php';
-require '../../functions.php';
-
-if (!isset($_SESSION['username'])) {
-    die("User not logged in");
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the item data from the AJAX request
-    $item = json_decode($_POST['item'], true);  // Decode the JSON data
-
-    if (isset($item['id'], $item['price'])) {
-        buyItem($link, $item);
-    } else {
-        echo "Invalid item data.";
-    }
-}
-
-function buyItem($link, $item)
-{
-    $success = buy_item($link, $_SESSION['username'], $item['price'], $item['id']);
-
-    if ($success) {
-        echo "<script type='text/javascript'>
-        alert('Purchase Successful!');
-        location.reload();  // Reload the page after the alert
-    </script>";
-    } else {
-        echo "<script type='text/javascript'>
-        alert('Purchase Failed');  // Simple pop-up
-    </script>";
-    }
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
 }

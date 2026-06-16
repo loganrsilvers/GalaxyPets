@@ -1,10 +1,18 @@
 using GalaxyPets.Components;
+using GalaxyPets.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddSingleton<AuthService>();
+builder.Services.AddSingleton<PetService>();
+builder.Services.AddSingleton<ClosetService>();
+builder.Services.AddSingleton<ShopService>();
+builder.Services.AddSingleton<GameService>();
+builder.Services.AddSingleton<MessageService>();
 
 var app = builder.Build();
 

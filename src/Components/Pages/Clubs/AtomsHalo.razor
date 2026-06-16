@@ -1,93 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GalaxyPets - Your Space Adventure Begins!</title>
-    <link rel="stylesheet" href="../../Assets/css/style.css">
-    <link rel="stylesheet" href="../../Assets/css/club.css">
+@page "/clubs/atomshalo"
+@inject AuthService AuthService
+@inject MessageService MessageService
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-<body>
+<div class="club-chatroom-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+    </header>
 
-<header class="border-bottom sticky-top">
-    <?php
-    session_start();
+    <marquee behavior="scroll" direction="left" scrollamount="5" style="color: #17ffee;">
+        •°*"˜˜"*°•.???.•°*"˜˜"*°•.???•°*"˜˜"*°•.???.•°*"˜˜"*°•.???•°*"˜˜"*°•.???
+    </marquee>
 
-    // Include your database connection and your chatroom functions
-    require '../../config.php';         // Update the path to your db connection
-    require '../../functions.php';  // Update the path to your functions
-
-    if (!isset($_SESSION['username'])) {
-        //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-        header("location: /../login.php");
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to join clubs.</p>
+    }
+    else
+    {
+        <main class="container-md">
+            <section class="club-chatroom-grid">
+                <section class="left-column">
+                    <figure>
+                        <figcaption>
+                            <h2>Atom''s Halo</h2>
+                        </figcaption>
+                        <img src="/img/planets/lavenderplanet.png" alt="Atom''s Halo">
+                    </figure>
+                    <section class="club-chatroom-info">
+                        <div><p>Explore the mysteries of the galactic halo, where stars and gas come together in a celestial dance.</p></div>
+                    </section>
+                </section>
+                <section class="right-column">
+                    <div class="chatroom-container">
+                        <div class="messages-box" @ref="messagesContainer">
+                            @foreach (var msg in Messages)
+                            {
+                                <div class="message-item">
+                                    <strong>@msg.Username:</strong> @msg.Content
+                                </div>
+                            }
+                        </div>
+                        <div class="input-box">
+                            <input type="text" @bind="NewMessage" placeholder="Type a message..." @onkeyup="HandleKeyPress" class="form-control">
+                            <button @onclick="SendMessage" class="btn btn-primary mt-2">Send</button>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
     }
 
-    $chatroomId = 1; // Hardcoding for now, or could be from GET param
-    $messages = getMessages($link, $chatroomId);
-    ?>
+    <marquee behavior="scroll" direction="right" scrollamount="5" style="color: #17ffee;">
+        •°*"˜˜"*°•.???.•°*"˜˜"*°•.???•°*"˜˜"*°•.???.•°*"˜˜"*°•.???•°*"˜˜"*°•.???
+    </marquee>
+</div>
 
-    <div id="navbar-container"></div>
-</header>
+@code {
+    private List<ChatMessage> Messages = new();
+    private string NewMessage = "";
+    private ElementReference messagesContainer;
+    private const int ClubId = 1;
 
-<marquee behavior=scroll direction="left" scrollamount="5" style="color: #17ffee;">
-    â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·.â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·.â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·
-</marquee>
+    protected override async Task OnInitializedAsync()
+    {
+        if (!AuthService.IsAuthenticated)
+        {
+            Navigation.NavigateTo("/account/login");
+            return;
+        }
 
-<main role="main" class="container-md">
-    <section class="club-chatroom-grid">
-        <section class="left-column">
-            <figure>
-                <figcaption>
-                    <h2>Atoms Halo</h2>
-                </figcaption>
-                <img src="../../Assets/img/planets/lavenderplanet.png" alt="Atoms Halo">
-            </figure>
-            <section class="club-chatroom-info">
-                <div><p>Message about Atoms Halo :)</p></div>
-                <div><p>Population: 5</p></div>
-                <div><p>Online: 4</p></div>
-            </section>
-        </section>
+        await LoadMessages();
+    }
 
-        <section class="chat-area">
-            <section class="message-area container">
-                <?php foreach ($messages as $message): ?>
-                    <?php
-                    $isCurrentUser = isset($_SESSION['user_id']) && $_SESSION['user_id'] == $message['user_id'];
-                    $chatClass = $isCurrentUser ? 'chat-right' : 'chat-left';
-                    ?>
-                    <div class="message <?= $chatClass ?>">
-                        <?php if ($isCurrentUser): ?>
-                            <div class="chat-message"><p><?= htmlspecialchars($message['content']) ?></p></div>
-                            <div class="chat-username"><p><?= htmlspecialchars($message['username']) ?></p></div>
-                        <?php else: ?>
-                            <div class="chat-username"><p><?= htmlspecialchars($message['username']) ?></p></div>
-                            <div class="chat-message"><p><?= htmlspecialchars($message['content']) ?></p></div>
-                        <?php endif; ?>
-                    </div>
-                <?php endforeach; ?>
-            </section>
+    private async Task LoadMessages()
+    {
+        Messages = await MessageService.GetMessagesAsync(ClubId);
+    }
 
-            <section class="input-area input-group container">
-                <form method="post" action="../../send_message.php" class="input-group w-100">
-                    <input class="form-control" name="message" type="text" placeholder="Type your message here..." required>
-                    <input type="hidden" name="chatroom_id" value="<?= $chatroomId ?>">
-                    <button class="btn btn-dark" type="submit">Send</button>
-                </form>
-            </section>
-        </section>
-    </section>
-</main>
+    private async Task SendMessage()
+    {
+        if (string.IsNullOrWhiteSpace(NewMessage))
+            return;
 
-<marquee behavior=scroll direction="right" scrollamount="5" style="color: #17ffee;">
-    â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·.â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·.â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·â€¢Â°*â€ËœËœâ€*Â°â€¢.Æ¸ÓœÆ·
-</marquee>
+        var msg = new ChatMessage
+        {
+            Username = AuthService.CurrentUsername ?? "Anonymous",
+            Content = NewMessage,
+            ClubId = ClubId,
+            Timestamp = DateTime.Now
+        };
 
-<script src="../../Assets/js/navbar.js"></script>
+        await MessageService.SendMessageAsync(msg);
+        NewMessage = "";
+        await LoadMessages();
+    }
 
-</body>
-</html>
+    private async Task HandleKeyPress(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+            await SendMessage();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        await Task.CompletedTask;
+    }
+}
