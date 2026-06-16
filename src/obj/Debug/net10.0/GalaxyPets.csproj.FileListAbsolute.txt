@@ -1,0 +1,9 @@
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\EmbeddedAttribute.cs
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\ValidatableTypeAttribute.cs
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\rpswa.dswa.cache.json
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.AssemblyInfoInputs.cache
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.AssemblyInfo.cs
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.csproj.CoreCompileInputs.cache
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\logan\source\repos\GalaxyPets - Blazor\GalaxyPets\src\obj\Debug\net10.0\GalaxyPets.sourcelink.json
