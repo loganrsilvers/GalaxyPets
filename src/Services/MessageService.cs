@@ -1,23 +1,47 @@
-<?php
-session_start();
+using GalaxyPets.Models;
+using Microsoft.EntityFrameworkCore;
+using GalaxyPets.Data;
+namespace GalaxyPets.Services;
 
-require './config.php';
-require './functions.php';
+public class ChatService
+{
+    private readonly ApplicationDbContext _context;
 
-if (!isset($_SESSION['username'])) {
-    //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-    header("location: /../login.php");
+    public ChatService(ApplicationDbContext context)
+    {
+        _context = context;
+    }
+
+    // Translates: sendMessage.php logic
+    public async Task<bool> SendMessageAsync(int clubId, int userId, string messageContent)
+    {
+        // Prevent empty messages from being saved
+        if (string.IsNullOrWhiteSpace(messageContent)) 
+            return false;
+
+        var chatMessage = new ChatMessage
+        {
+            ClubId = clubId,
+            UserId = userId,
+            Message = messageContent,
+            SentAt = DateTime.UtcNow
+        };
+
+        _context.ChatMessages.Add(chatMessage);
+        await _context.SaveChangesAsync();
+        
+        return true;
+    }
+
+    // Translates: getMessages() from functions.php
+    public async Task<List<ChatMessage>> GetMessagesAsync(int clubId)
+    {
+        return await _context.ChatMessages
+            // .Include() tells EF Core to automatically fetch the User data 
+            // tied to this message, so we can display their Username!
+            .Include(m => m.User) 
+            .Where(m => m.ClubId == clubId)
+            .OrderBy(m => m.SentAt)
+            .ToListAsync();
+    }
 }
-
-// Look up user info from username
-$user = getUserByUsername($link, $_SESSION['username']);
-
-$chatroomId = intval($_POST['chatroom_id']);
-$content = trim($_POST['message']);
-
-if (!empty($content)) {
-    sendMessage($link, $user, $chatroomId, $content);
-}
-
-header("Location: Pages/clubs/chatroom.php?room=$chatroomId");
-exit;
