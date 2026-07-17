@@ -1,13 +1,14 @@
 using GalaxyPets.Models;
 using Microsoft.EntityFrameworkCore;
 using GalaxyPets.Data;
+
 namespace GalaxyPets.Services;
 
-public class ChatService
+public class MessageService
 {
     private readonly ApplicationDbContext _context;
 
-    public ChatService(ApplicationDbContext context)
+    public MessageService(ApplicationDbContext context)
     {
         _context = context;
     }
@@ -23,7 +24,7 @@ public class ChatService
         {
             ClubId = clubId,
             UserId = userId,
-            Message = messageContent,
+            Content = messageContent,
             SentAt = DateTime.UtcNow
         };
 

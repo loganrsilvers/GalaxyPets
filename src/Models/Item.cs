@@ -17,4 +17,5 @@ public class Item
 
     [Required, MaxLength(200)]
     public string ImagePath { get; set; } = string.Empty;
+    public int Quantity {get; set;}
 }

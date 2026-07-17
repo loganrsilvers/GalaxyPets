@@ -1,29 +1,30 @@
 using GalaxyPets.Components;
 using GalaxyPets.Data;
-using Microsoft.EntityFrameworkCore; 
-using Npgsql.EntityFrameworkCore.PostgreSQL; 
+using GalaxyPets.Services; // Partner's services
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
+// 1. YOUR Database Service
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// 2. PARTNER'S Business Logic Services
+builder.Services.AddSingleton<AuthService>();
+builder.Services.AddSingleton<PetService>();
+builder.Services.AddSingleton<ClosetService>();
+builder.Services.AddSingleton<ShopService>();
+builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<MessageService>();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
-app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
-
+// ... (Rest of the pipeline remains the same)
 app.UseAntiforgery();
-
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

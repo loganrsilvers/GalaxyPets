@@ -1,10 +1,13 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace GalaxyPets.Models;
 
 public class Inventory
 {
+
     [Key]
     public int Id { get; set; }
 
@@ -18,3 +21,4 @@ public class Inventory
 
     public bool Equipped { get; set; } = false;
 }
+

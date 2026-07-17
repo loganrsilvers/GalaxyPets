@@ -1,56 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
+@page "/games/2048"
+@inject AuthService AuthService
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+<div class="game2048-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+        @if (AuthService.IsAuthenticated)
+        {
+            <h1>Welcome, @AuthService.CurrentUsername!</h1>
+        }
+    </header>
 
-    <title>2048</title>
-
-    <link rel="stylesheet" href="../../Assets/css/2048Style.css">
-    <link rel="stylesheet" href="../../Assets/css/style.css">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
-          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-</head>
-
-
-<body>
-<header>
-    <?php
-    session_start();
-    
-    if (!isset($_SESSION['username'])){
-        //echo "<script>alert('current user: ".$_SESSION['username']."')</script>";
-        header("location: /../login.php");
+    @if (!AuthService.IsAuthenticated)
+    {
+        <p class="text-center mt-5"><NavLink href="/account/login">Log in</NavLink> to play.</p>
     }
-    
-    ?>
-    
-    <div id="navbar-container"></div>
-    <h1>Welcome, <?php echo htmlspecialchars('username'); ?>!</h1>
-    <p>Your current points: <strong><?php echo htmlspecialchars('points'); ?></strong></p>
-</header>
+    else
+    {
+        <main>
+            <div id="game-area">
+                <div class="game-info">
+                    <h1>2048</h1>
+                    <p>Combine the tiles and reach 2048!</p>
+                </div>
+                <div id="game-container"></div>
+            </div>
+        </main>
+    }
+</div>
 
-<main>
-    <div class="main">
-        <div class="game-info">
-            <h1>2048</h1>
-            <br>
-            <h2>Score: <span id="score">0</span></h2>
-        </div>
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && AuthService.IsAuthenticated)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "fetch(''/js/2048.js'').then(r => r.text()).then(t => eval(t))");
+        }
+    }
 
-        <div id="board" class="container"></div>
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        try
+        {
+            await JSRuntime.InvokeVoidAsync("eval", "if(typeof game !== ''undefined'') game = null;");
+        }
+        catch { }
+    }
 
-        <div class="game-controls">
-            <p>Use the 'Arrow Keys' to move<br> the planets from side to side</p>
-        </div>
-    </div>
-</main>
-
-<script src="./../../Assets/js/2048.js"></script>
-<script src="../../Assets/js/navbar.js"></script>
-</body>
-</html> 
+    [Inject]
+    private IJSRuntime? JSRuntime { get; set; }
+}

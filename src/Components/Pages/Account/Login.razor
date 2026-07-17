@@ -1,141 +1,76 @@
-<?php
-session_start();
+@page "/account/login"
+@using System.ComponentModel.DataAnnotations
+@inject NavigationManager Navigation
+@inject AuthService AuthService
 
-// Redirect if already logged in
-if (isset($_SESSION['username'])) {
-    header("location: ../../Pages/petprofile.php");
-    exit;
-}
+<div class="login-page">
+    <header class="border-bottom sticky-top">
+        <div id="navbar-container"></div>
+    </header>
 
-// Include config file
-require_once './config.php';
+    <marquee behavior="scroll" direction="right" scrollamount="5" class="marquee-text">
+        ��*����*��.???.��*����*��.???��*����*��.???.��*����*��.???��*����*��.???
+    </marquee>
 
-// Define variables and initialize with empty values
-$username = $password = "";
-$username_err = $password_err = "";
+    <main class="d-flex justify-content-center align-items-center min-vh-50">
+        <div class="login-form w-100" style="max-width: 400px;">
+            <h2 class="text-center mb-4">Login</h2>
 
-// Processing form data when form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    if (empty(trim($_POST["username"]))) {
-        $username_err = 'Please enter username.';
-    } else {
-        $username = trim($_POST["username"]);
-    }
-
-    if (empty(trim($_POST['password']))) {
-        $password_err = 'Please enter your password.';
-    } else {
-        $password = trim($_POST['password']);
-    }
-
-    if (empty($username_err) && empty($password_err)) {
-        $sql = "SELECT username, password FROM users WHERE username = ?";
-
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
-            $param_username = $username;
-
-            if (mysqli_stmt_execute($stmt)) {
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    mysqli_stmt_bind_result($stmt, $username, $hashed_password);
-                    if (mysqli_stmt_fetch($stmt)) {
-                        if (password_verify($password, $hashed_password)) {
-                            session_start();
-                            $_SESSION['username'] = $username;
-
-                            $sql2 = "INSERT INTO latestLogin (username) VALUES ('$username') 
-                                     ON DUPLICATE KEY UPDATE prevDate = latestDate, latestDate = CURRENT_TIMESTAMP";
-
-                            if ($link->query($sql2) === TRUE) {
-                                header("location: ../../Pages/petprofile.php");
-                                exit;
-                            } else {
-                                echo "Error: " . $sql2 . "<br>" . $link->error;
-                            }
-                        } else {
-                            $password_err = 'The password you entered was not valid.';
-                        }
-                    }
-                } else {
-                    $username_err = 'No account found with that username.';
-                }
-            } else {
-                echo "Oops! Something went wrong. Please try again later.";
+            @if (!string.IsNullOrEmpty(FormError))
+            {
+                <div class="alert alert-danger">@FormError</div>
             }
+
+            <EditForm Model="LoginModel" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username:</label>
+                    <InputText id="username" class="form-control" @bind-Value="LoginModel.Username" />
+                    <ValidationMessage For="() => LoginModel.Username" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <InputText id="password" type="password" class="form-control" @bind-Value="LoginModel.Password" />
+                    <ValidationMessage For="() => LoginModel.Password" />
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+
+                <div class="text-center">
+                    <p>Don't have an account? <NavLink href="/account/register" class="text-info">Sign up now</NavLink></p>
+                </div>
+            </EditForm>
+        </div>
+    </main>
+</div>
+
+@code {
+    private LoginRequest LoginModel { get; } = new();
+    private string? FormError;
+
+    private void HandleValidSubmit()
+    {
+        if (AuthService.Login(LoginModel.Username, LoginModel.Password, out var error))
+        {
+            Navigation.NavigateTo("/petprofile");
         }
-        mysqli_stmt_close($stmt);
+        else
+        {
+            FormError = error;
+        }
     }
-    mysqli_close($link);
+
+    private sealed class LoginRequest
+    {
+        [Required(ErrorMessage = "Please enter username.")]
+        public string? Username { get; set; }
+
+        [Required(ErrorMessage = "Please enter your password.")]
+        public string? Password { get; set; }
+    }
 }
-?>
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galaxy Pets - Sign In</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="Assets/css/style.css">
-    <link rel="stylesheet" href="Assets/css/loginstyle.css">
-</head>
-
-<body>
-<header class="border-bottom sticky-top">
-    <div id="navbar-container"></div>
-</header>
-
-<marquee behavior="scroll" direction="right" scrollamount="5" class="marquee-text">
-    •°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ
-</marquee>
-
-<main class="d-flex justify-content-center align-items-center min-vh-50">
-    <div class="login-form w-100" style="max-width: 400px;">
-        <h2 class="text-center mb-4">Login</h2>
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post" novalidate>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username:</label>
-                <input type="text" name="username" id="username" class="form-control <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo htmlspecialchars($username); ?>">
-                <div class="invalid-feedback"><?php echo $username_err; ?></div>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" name="password" id="password" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
-                <div class="invalid-feedback"><?php echo $password_err; ?></div>
-            </div>
-            <div class="d-grid mb-3">
-                <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-            <div class="text-center">
-                <p>Don't have an account? <a href="register.php" class="text-info">Sign up now</a></p>
-                <p><a href="ForgotMyPassword.php" class="text-info">I forgot my password</a></p>
-            </div>
-        </form>
-    </div>
-</main>
-
-<marquee behavior="scroll" direction="left" scrollamount="5" class="marquee-text mt-4">
-    •°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ.•°*”˜˜”*°•.ƸӜƷ•°*”˜˜”*°•.ƸӜƷ
-</marquee>
-
-<footer class="d-flex flex-wrap justify-content-between align-items-center border-top footer fixed-bottom">
-    <p class="col-md-4 mb-0 text-body-secondary">&copy; 2025 GalaxyPets</p>
-    <ul class="d-flex align-items-center list-unstyled m-0 ml-auto">
-        <li>
-            <a class="text-body-secondary"
-               href="README.md">About Us</a></li>
-        <li>
-            <a class="text-body-secondary"
-               href="#">Official Site</a></li>
-    </ul>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="./Assets/js/navbar.js"></script>
-</body>
-</html>

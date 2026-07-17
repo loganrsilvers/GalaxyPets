@@ -1,3 +1,4 @@
+
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,7 +18,9 @@ public class ChatMessage
     public User? User { get; set; }
 
     [Required, MaxLength(500)]
-    public string Message { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
 
+    public string Username { get; set; } = string.Empty; 
+    public DateTime Timestamp { get; set; } = DateTime.UtcNow;
     public DateTime SentAt { get; set; } = DateTime.UtcNow;
 }
