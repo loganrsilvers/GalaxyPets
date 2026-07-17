@@ -1,1 +1,12 @@
 appsettings.json
+# Build results
+[Bb]in/
+[Oo]bj/
+*.pdb
+*.cache
+*.json
+# Generated files
+*.user
+*.lock.json
+project.assets.json
+*.sourcelink.json
